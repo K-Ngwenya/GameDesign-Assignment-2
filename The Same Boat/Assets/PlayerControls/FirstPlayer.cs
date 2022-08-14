@@ -4,14 +4,18 @@ using UnityEngine;
 
 public class FirstPlayer : MonoBehaviour
 {
-    [SerializeField] float speed = 5;
+    [SerializeField] float speed = 5f;
     [SerializeField] PlayerController controller;
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] float jumpForce = 5f;
+    [SerializeField] float jumpForce;
+    [SerializeField] float gravity = -9.81f;
+    private float velocity;
     private Collider _groundDist;
     private Vector2 moveInput;
+
     private float jumpVal;
     private float distGround;
+    private bool jumping;
 
     public Transform groundCheck;
     public float groundCheckRadius;
@@ -23,6 +27,8 @@ public class FirstPlayer : MonoBehaviour
         controller = new PlayerController();
         rb = GetComponent<Rigidbody2D>();
 
+        controller.Player1.Jump.performed += _ => Jump();
+
         if(rb == null)
         {
             Debug.Log("This isn't rigid at all");
@@ -30,26 +36,39 @@ public class FirstPlayer : MonoBehaviour
     }
 
     private void Start() {
-        isTouchingGround = false;
+        jumping = false;
+    }
+
+    private void Jump() {
+        jumping = true;
     }
 
     private void Update() {
 
         isTouchingGround = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-
-        if(isTouchingGround && moveInput.y != 0)
+        velocity += gravity * Time.deltaTime;
+        if(isTouchingGround && jumping)
         {
-            Debug.Log("UP");
-            rb.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+            velocity = jumpForce;
+            /*Debug.Log("UP");
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            jumping = false;*/
+        }
+        else if(!isTouchingGround && jumping)
+        {
+            jumping = false;
+        }
+        transform.Translate(new Vector2(rb.velocity.x, velocity) * Time.deltaTime);
+
+        if(isTouchingGround && velocity < 0)
+        {
+            velocity = 0;
         }
     }
 
     private void FixedUpdate() {
         moveInput = controller.Player1.Movement.ReadValue<Vector2>();
-        if(!isTouchingGround)
-        {
-            moveInput.y = 0f;
-        }
+        moveInput.y = 0f;
         rb.velocity = moveInput * speed;
 
         
@@ -66,7 +85,7 @@ public class FirstPlayer : MonoBehaviour
 
     private bool IsGrounded()
     {
-        return Physics.Raycast(transform.position, -Vector3.up, distGround + 0.1f);
+        return Physics2D.Raycast(transform.position, -Vector2.up, distGround + 0.1f);
     }
 
 
