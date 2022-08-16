@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FirstPlayer : MonoBehaviour
+public class SecondPlayer : MonoBehaviour
 {
     [SerializeField] float speed = 5f;
     [SerializeField] PlayerController controller;
@@ -27,7 +27,7 @@ public class FirstPlayer : MonoBehaviour
         controller = new PlayerController();
         rb = GetComponent<Rigidbody2D>();
 
-        controller.Player1.Jump.performed += _ => Jump();
+        controller.Player2.Jump.performed += _ => Jump();
 
         if(rb == null)
         {
@@ -50,8 +50,8 @@ public class FirstPlayer : MonoBehaviour
         if(isTouchingGround && jumping)
         {
             velocity = jumpForce;
-            /*Debug.Log("UP");
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            Debug.Log("UP2");
+            /*rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumping = false;*/
         }
         else if(!isTouchingGround && jumping)
@@ -67,7 +67,7 @@ public class FirstPlayer : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        moveInput = controller.Player1.Movement.ReadValue<Vector2>();
+        moveInput = controller.Player2.Movement.ReadValue<Vector2>();
         moveInput.y = 0f;
         rb.velocity = moveInput * speed;
 
@@ -76,19 +76,15 @@ public class FirstPlayer : MonoBehaviour
     }
 
     private void OnEnable() {
-        controller.Player1.Enable();
+        controller.Player2.Enable();
     }
 
     private void OnDisable() {
-        controller.Player1.Disable();
+        controller.Player2.Disable();
     }
 
     private bool IsGrounded()
     {
         return Physics2D.Raycast(transform.position, -Vector2.up, distGround + 0.1f);
     }
-
-
-
-
 }
