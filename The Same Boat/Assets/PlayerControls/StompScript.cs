@@ -14,7 +14,7 @@ public class StompScript : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other) {
         if(other.gameObject.tag == "Enemy")
         {
-           //rb.AddForce2D(transform.up * juice, ForceMode2D.Impulse);
+           StartCoroutine(KillThatBoi(other));
         }
     }
 
@@ -22,6 +22,6 @@ public class StompScript : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
 
-         Destroy(other.gameObject);
+         Destroy(enemy.gameObject);
     }
 }
