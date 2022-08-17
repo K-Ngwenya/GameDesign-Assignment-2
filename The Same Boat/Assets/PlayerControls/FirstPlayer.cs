@@ -71,8 +71,6 @@ public class FirstPlayer : MonoBehaviour
         moveInput.y = 0f;
         rb.velocity = moveInput * speed;
 
-        
-
     }
 
     private void OnEnable() {
@@ -88,7 +86,12 @@ public class FirstPlayer : MonoBehaviour
         return Physics2D.Raycast(transform.position, -Vector2.up, distGround + 0.1f);
     }
 
-
+    private void OnTriggerEnter2D(Collider2D other) {
+        if(other.gameObject.tag == "Enemy")
+        {
+            Destroy(other.gameObject);
+        }
+    }
 
 
 }
